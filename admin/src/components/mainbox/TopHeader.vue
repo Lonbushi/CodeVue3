@@ -16,9 +16,6 @@
                     <el-icon :size="30" color="white">
                         <User />
                     </el-icon>
-                    <el-icon class="el-icon--right">
-                        <arrow-down />
-                    </el-icon>
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
@@ -32,7 +29,7 @@
 </template>
 <script setup>
 import { useStore } from 'vuex'
-import { Expand, User, Fold } from '@element-plus/icons-vue'
+import { Expand, User, Fold  } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 const store = useStore()
 const router = useRouter()

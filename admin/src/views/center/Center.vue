@@ -6,7 +6,8 @@
                 <el-card class="box-card">
                     <el-avatar :size="100" :src="avatarUrl" />
                     <h3>{{ store.state.userInfo.username }}</h3>
-                    <h5>{{ store.state.userInfo.role === 1 ? '管理员' : '编辑' }}</h5>
+                    <el-tag v-if="store.state.userInfo.role === 1" class="ml-2" type="danger">超级管理员</el-tag>
+                    <el-tag v-else class="ml-2" type="success">编辑</el-tag>
                 </el-card>
             </el-col>
             <el-col :span="16">
@@ -31,14 +32,7 @@
                             <el-input v-model="userForm.introduction" type="textarea" />
                         </el-form-item>
                         <el-form-item label="头像" prop="avatar">
-                            <el-upload class="avatar-uploader"
-                                action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-                                :show-file-list="false" :auto-upload="false" :on-change="headleChange">
-                                <img v-if="userForm.avatar" :src="uploadAvatar" class="avatar" />
-                                <el-icon v-else class="avatar-uploader-icon">
-                                    <Plus />
-                                </el-icon>
-                            </el-upload>
+                            <upload :avatar="userForm.avatar" @kerwinchange="headleChange" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="submitForm()">更新</el-button>
@@ -52,14 +46,12 @@
 <script setup>
 import { useStore } from 'vuex';
 import { computed, ref, reactive } from 'vue';
-import { Plus } from '@element-plus/icons-vue'
-import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import upload from '../../util/upload';
+import Upload from '../../components/upload/Upload.vue';
 const store = useStore()
 const avatarUrl = computed(() => store.state.userInfo.avatar ? 'http://localhost:3000' + store.state.userInfo.avatar : `https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png`)
-const uploadAvatar = computed(()=>{
-    userForm.avatar.includes('blob')?userForm.avatar:'http://localhost:3000'+ userForm.avatar
-})
+
 const { username, gender, introduction, avatar } = store.state.userInfo
 const userFormRef = ref()
 const userForm = reactive({
@@ -67,35 +59,35 @@ const userForm = reactive({
     gender,
     introduction,
     avatar,
-    file:null
+    file: null
 })
 const userFormRules = reactive({
     username: [
-        { required: true, message: '请输入名字', trigger: 'blur' },
+        { required: true, message: '请输入用户名', trigger: 'blur' },
     ],
     gender: [
         { required: true, message: '请选择性别', trigger: 'blur' },
     ],
     introduction: [
-        { required: true, message: '请输入介绍', trigger: 'blur' },
+        { required: false, message: '请输入介绍', trigger: 'blur' },
     ],
     avatar: [
-        { required: true, message: '请上传头像', trigger: 'blur' },
+        { required: false, message: '请上传头像', trigger: 'blur' },
     ],
 })
 
 const options = [
     {
         label: "保密",
-        value: '0'
+        value: 0
     },
     {
         label: "男",
-        value: '1'
+        value: 1
     },
     {
         label: "女",
-        value: '2'
+        value: 2
     },
 
 ]
@@ -103,32 +95,19 @@ const options = [
 //每次选择完图片之后的回调
 const headleChange = (file) => {
     // console.log(file.raw);
-    userForm.avatar = URL.createObjectURL(file.raw)
-    userForm.file = file.raw
+    userForm.avatar = URL.createObjectURL(file)
+    userForm.file = file
 }
 //更新提交
-const submitForm  = () =>{
-    userFormRef.value.validate((valid)=>{
-        if(valid){
+const submitForm = () => {
+    userFormRef.value.validate(async (valid) => {
+        if (valid) {
             // console.log("submit",userForm);
-            const params = new FormData()
-            for(let i in userForm){
-               params.append(i,userForm[i]) 
+            const res = await upload("/adminapi/user/upload", userForm)
+            if (res.ActionType === "OK") {
+                store.commit("changeUserInfo", res.data)
+                ElMessage.success("更新成功")
             }
-
-            // console.log(params);
-            axios.post("/adminapi/user/upload",params,{
-                headers:{
-                    "Content-Type":"multipart/form-data"
-                }
-            }).then(res=>{
-                console.log(res.data);
-
-                if(res.data.ActionType==="OK"){
-                    store.commit("changeUserInfo",res.data.data)
-                    ElMessage.success("更新成功")
-                }
-            })
         }
     })
 }
@@ -141,31 +120,5 @@ const submitForm  = () =>{
     .box-card {
         text-align: center;
     }
-}
-
-::v-deep .avatar-uploader .el-upload {
-    border: 1px dashed var(--el-border-color);
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: var(--el-transition-duration-fast);
-}
-
-::v-deep .avatar-uploader .el-upload:hover {
-    border-color: var(--el-color-primary);
-}
-
-::v-deep .el-icon.avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    text-align: center;
-}
-
-.avatar {
-    width: 178px;
-    height: 178px;
 }
 </style>

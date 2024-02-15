@@ -8,6 +8,10 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 const UserRouter = require('./routes/admin/UserRouter');
 const JWT = require('./util/JWT');
+const NewsRouter = require('./routes/admin/NewsRouter');
+const webNewsRouter = require('./routes/web/NewsRouter');
+const ProductRouter = require('./routes/admin/ProductRouter');
+const UploadRouter = require('./routes/admin/UploadRouter');
 
 var app = express();
 
@@ -24,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+app.use(webNewsRouter)
 
 /* 
  /adminapi/* -后台系统用的
@@ -57,6 +62,9 @@ app.use((req, res, next) => {
 
 
 app.use(UserRouter)
+app.use(NewsRouter)
+app.use(ProductRouter)
+app.use(UploadRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

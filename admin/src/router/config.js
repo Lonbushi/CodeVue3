@@ -4,9 +4,12 @@ import UserAdd from '../views/user_manage/UserAdd.vue'
 import UserList from '../views/user_manage/UserList.vue'
 import NewsAdd from '../views/news_manage/NewsAdd.vue'
 import NewsList from '../views/news_manage/NewsList.vue'
+import NewsEdit from '../views/news_manage/NewsEdit.vue'
+import ProductEdit from '../views/product_manage/ProductEdit.vue'
 import ProductAdd from '../views/product_manage/ProductAdd.vue'
 import ProductList from '../views/product_manage/ProductList.vue'
 import NotFound from "../views/notfound/NotFound.vue"
+import ExcelTool from '../views/tools/ExcelTool.vue'
 const routes = [
     {
         path:'/index',
@@ -18,11 +21,13 @@ const routes = [
     },
     {
         path:'/user-manage/useradd',
-        component:UserAdd
+        component:UserAdd,
+        requirAdmin:true
     },
     {
         path:'/user-manage/userlist',
-        component:UserList
+        component:UserList,
+        requirAdmin:true
     },
     {
         path:'/news-manage/newsadd',
@@ -33,12 +38,24 @@ const routes = [
         component:NewsList
     },
     {
+        path:'/news-manage/editnews/:id',
+        component:NewsEdit
+    },
+    {
         path:'/product-manage/productadd',
         component:ProductAdd
     },
     {
         path:'/product-manage/productlist',
         component:ProductList
+    },
+    {
+        path:'/product-manage/editproduct/:id',
+        component:ProductEdit
+    },
+    {
+        path:'/tools/exceltool',
+        component:ExcelTool
     },
     {
         path:'/',

@@ -11,4 +11,9 @@
 import SideMean from '../components/mainbox/SideMean.vue';
 import TopHeader from '../components/mainbox/TopHeader.vue';
 </script>
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.el-main{
+    overflow: auto;
+    height: calc(100vh - 60px);
+}
+</style>

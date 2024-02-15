@@ -5,7 +5,8 @@ export default createStore({
   state: {
     isGetterRouter: false,
     isCollapsed: false,
-    userInfo: {}
+    userInfo: {},
+    productList:{}
   },
   mutations: {
     ChangeGetterRouter(state, value) {
@@ -23,7 +24,7 @@ export default createStore({
     },
     clearUserInfo(state, value) {
       state.userInfo = {}
-    }
+    },
   },
   plugins: [createPersistedState({
     paths: ['isCollapsed', 'userInfo']//控制是否持久化
